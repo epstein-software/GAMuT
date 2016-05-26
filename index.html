@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>GAMuT by epstein-software</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">GAMuT</h1>
+      <h2 class="project-tagline">kernel distance-covariance method for gene-based association testing of rare variants with multiple phenotypes in a sample of unrelated subjects</h2>
+      <a href="https://github.com/epstein-software/GAMuT" class="btn">View on GitHub</a>
+      <a href="https://github.com/epstein-software/GAMuT/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/epstein-software/GAMuT/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <p><img src="Rlogo.png" alt="R"></p>
+
+<h2>
+<a id="gamut--gene-association-with-multiple-traits" class="anchor" href="#gamut--gene-association-with-multiple-traits" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GAMuT:  Gene Association with Multiple Traits</h2>
+
+<h3>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h3>
+
+<p>In <a href="http://www.cell.com/ajhg/abstract/S0002-9297(16)00052-5">Broadaway et al. (2016)</a>,
+we created a test based on kernel distance-covariance methodology called GAMuT for gene-based association testing of rare variants with multiple phenotypes in a sample of unrelated subjects. The analyzed phenotypes can be either continuous or categorical in nature.  The method also allows for adjustment of covariates using adjusted residuals. </p>
+
+<p>GAMuT is implemented as a set of R routines, which can be executed within an R environment. </p>
+
+<h3>
+<a id="the-r-environment" class="anchor" href="#the-r-environment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The R environment</h3>
+
+<p>R is a widely-used, free and open source software environment for statistical computing and graphics. The most recent version of R can be downloaded from the 
+<a href="http://cran.r-project.org/">Comprehensive R Archive Network (CRAN)</a>
+CRAN provides precompiled binary versions of R for Windows, MacOS, and select Linux distributions that are likely sufficient for many users' needs.  Users can also install R from source code;  however this may require a significant amount of effort.  For specific details on how to compile, install, and manage R and R-packages, refer to the manual <a href="http://cran.r-project.org/doc/manuals/r-release/R-admin.html">R Installation and Administration</a>.</p>
+
+<h3>
+<a id="r-packages-required-for-analysis" class="anchor" href="#r-packages-required-for-analysis" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>R packages required for analysis</h3>
+
+<p>GAMuT requires the installation of the following R library:</p>
+
+<p><a href="https://cran.r-project.org/web/packages/CompQuadForm/index.html">CompQuadForm</a></p>
+
+<p>The easiest method to install these packages is with the following command entered in an R shell:</p>
+
+<pre><code>install.packages("CompQuadForm")
+</code></pre>
+
+<p>One can also <a href="http://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-packages">install R packages from the command line</a>.</p>
+
+<h3>
+<a id="running-gamut" class="anchor" href="#running-gamut" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running GAMuT</h3>
+
+<p>For the example, we provide sample files consisting of 1000 unrelated variants
+possessing 6 phenotypes and who are sequenced for a set of rare variants in a gene of interest.
+We show in our example R code how to implement the GAMuT test to perform an association test
+between the 6 phenotypes and the rare variants within the gene of interest. </p>
+
+<p>In the <a href="http://genetics.emory.edu/labs/epstein/software/gamut/GAMuT-example-analysis.html">GAMuT example analysis page</a>,
+we provide a step-by-step instruction on how the GAMuT code operates here.</p>
+
+<h3>
+<a id="questions-and-technical-support" class="anchor" href="#questions-and-technical-support" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Questions and technical support</h3>
+
+<p>For questions or concerns with the GAMuT R routines, please contact
+<a href="mailto:rduncan@emory.edu">Richard Duncan</a> and 
+<a href="mailto:mpepste@emory.edu">Michael Epstein</a></p>
+
+<p>We appreciate any feedback you have with our site and instructions.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/epstein-software/GAMuT">GAMuT</a> is maintained by <a href="https://github.com/epstein-software">epstein-software</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
