@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+.knitr.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+},
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0em 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.rimage.left {
+  text-align: left;
+}
+.rimage.right {
+  text-align: right;
+}
+.rimage.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+  <title>GAMuT example</title>
+</head>
+<body>
+
+
+<h2>An example GAMuT analysis</h2>
+In the code that follows, we use notation consistent with the
+corresponding <a href="http://www.cell.com/ajhg/abstract/S0002-9297(16)00052-5"
+   target="blank">AJHG paper by Broadaway et al. (2016)</a>.
+<br><br>
+The non-printing lines of R code shown in this page are contained in
+the file '<code>GAMuT.R</code>' found within the archive file
+<a href="GAMuT.zip" target="blank">GAMuT.zip</a>.
+
+
+<h3>Preliminary code dependencies</h3>
+
+For this example, we will be using the <code>davies()</code> function
+defined in the R package
+<a href="https://cran.r-project.org/web/packages/CompQuadForm/index.html"
+   target="blank">CompQuadForm</a>.
+This package is loaded with the <code>library</code> command:
+<div class="chunk" id="unnamed-chunk-1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(CompQuadForm)</span>
+</pre></div>
+</div></div>
+
+The functions used are defined and written in the file
+<code>GAMuT-functions.R</code> found in the <a href="GAMuT.zip" target="blank">zip archive</a>.
+For the functions to be recognized, this needs to be sourced:
+<div class="chunk" id="unnamed-chunk-2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;GAMuT-functions.R&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div></div>
+All of these functions have the substring 'GAMuT' in their name.
+Thus, to check the availability of these functions
+a filtered list can be generated:
+<div class="chunk" id="unnamed-chunk-3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">ls</span><span class="hl std">(</span><span class="hl kwc">pattern</span><span class="hl std">=</span><span class="hl str">&quot;GAMuT&quot;</span><span class="hl std">)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] &quot;linear_GAMuT_geno&quot;  &quot;linear_GAMuT_pheno&quot; &quot;proj_GAMuT_pheno&quot;  
+## [4] &quot;TestGAMuT&quot;
+</pre></div>
+</div></div>
+
+
+<h3>Step 1: Read in <code>PHENO</code>, <code>GENO</code>, and <code>COVAR</code> matrices</h3>
+The sample phenotype, genotype, and covariate data are provided in the
+respective files,
+<a href="phenotypes.csv" target="blank">phenotypes.csv</a>,
+<a href="variants.csv" target="blank">variants.csv</a>, and
+<a href="covariates.csv" target="blank">covariates.csv</a>.
+These files are also provided within the zip archive file.
+We read this data into R with the following commands:
+<div class="chunk" id="unnamed-chunk-4"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">GENO</span>  <span class="hl kwb">&lt;-</span> <span class="hl kwd">read.csv</span><span class="hl std">(</span><span class="hl str">&quot;variants.csv&quot;</span><span class="hl std">)</span>
+<span class="hl std">PHENO</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">read.csv</span><span class="hl std">(</span><span class="hl str">&quot;phenotypes.csv&quot;</span><span class="hl std">)</span>
+<span class="hl std">COVAR</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">read.csv</span><span class="hl std">(</span><span class="hl str">&quot;covariates.csv&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div></div>
+
+There are 368 columns in <code>GENO</code>, so here we print only the first eight columns
+and four rows using
+<code>head()</code>:
+<div class="chunk" id="unnamed-chunk-5"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">head</span><span class="hl std">(GENO[,</span><span class="hl num">1</span><span class="hl opt">:</span><span class="hl num">8</span><span class="hl std">],</span> <span class="hl kwc">n</span><span class="hl std">=</span><span class="hl num">4</span><span class="hl std">)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##   V1 V2 V3 V4 V5 V6 V7 V8
+## 1  0  0  0  0  0  0  0  0
+## 2  0  0  0  0  0  0  0  0
+## 3  0  0  0  0  0  0  0  0
+## 4  0  0  0  0  0  0  0  0
+</pre></div>
+</div></div>
+The first four rows and all columns of the other two arrays are similarly checked:
+<div class="chunk" id="unnamed-chunk-6"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">head</span><span class="hl std">(PHENO,</span> <span class="hl kwc">n</span><span class="hl std">=</span><span class="hl num">4</span><span class="hl std">)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##   Phenotype1 Phenotype2 Phenotype3 Phenotype4 Phenotype5 Phenotype6
+## 1    -1.5761    -0.5599   -0.96585    -1.1779    -0.7366    -0.8885
+## 2     0.5411     1.3688   -0.01711     0.7002     2.0259     1.9142
+## 3    -0.5115    -0.2910   -0.03845    -0.7068    -0.0155     0.3282
+## 4    -0.5073     0.2174    0.49525     0.3535    -0.7514     1.0904
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">head</span><span class="hl std">(COVAR,</span> <span class="hl kwc">n</span><span class="hl std">=</span><span class="hl num">4</span><span class="hl std">)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##     COVAR1 COVAR2
+## 1 -0.01153 0.2955
+## 2  1.38593 0.2443
+## 3  0.08433 0.0934
+## 4  0.49490 2.7669
+</pre></div>
+</div></div>
+
+<h3>Step 2:  Residualize the phenotypes in <code>PHENO</code>
+  on the covariates in <code>COVAR</code></h3>
+
+Note:  Each phenotype in <code>PHENO</code> will be residualized
+on each covariate in <code>COVAR</code>.
+
+If you wish to only residualize phenotypes on a subset of covariates in COVAR, 
+make sure to make appropriate adjustments to this block of code:
+<div class="chunk" id="unnamed-chunk-7"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com"># Matrix of residualized phenotypes:</span>
+<span class="hl std">residuals</span> <span class="hl kwb">=</span> <span class="hl kwd">matrix</span><span class="hl std">(</span><span class="hl num">NA</span><span class="hl std">,</span> <span class="hl kwc">nrow</span><span class="hl std">=</span><span class="hl kwd">nrow</span><span class="hl std">(PHENO),</span> <span class="hl kwc">ncol</span><span class="hl std">=</span><span class="hl kwd">ncol</span><span class="hl std">(PHENO))</span>
+
+<span class="hl kwa">for</span><span class="hl std">(l</span> <span class="hl kwa">in</span> <span class="hl num">1</span><span class="hl opt">:</span><span class="hl kwd">ncol</span><span class="hl std">(PHENO)){</span>
+  <span class="hl std">model.residual</span> <span class="hl kwb">=</span> <span class="hl kwd">lm</span><span class="hl std">(PHENO[,l]</span> <span class="hl opt">~</span> <span class="hl kwd">as.matrix</span><span class="hl std">(COVAR))</span>
+  <span class="hl std">residuals[,l]</span> <span class="hl kwb">=</span> <span class="hl kwd">resid</span><span class="hl std">(model.residual)</span>
+<span class="hl std">}</span>
+</pre></div>
+</div></div>
+
+The first six rows of the 1000x6 <code>residuals</code> matrix are:
+<div class="chunk" id="unnamed-chunk-8"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">head</span><span class="hl std">(residuals,</span> <span class="hl kwc">n</span><span class="hl std">=</span><span class="hl num">4</span><span class="hl std">)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##         [,1]     [,2]     [,3]     [,4]    [,5]    [,6]
+## [1,] -1.5964 -0.53340 -1.01969 -1.21835 -0.8288 -0.9447
+## [2,]  0.3916  1.22380 -0.31997  0.46899  1.6950  1.5994
+## [3,] -0.5360 -0.26521 -0.09175 -0.74692 -0.1035  0.2680
+## [4,] -0.6326  0.04302  0.13016  0.07602 -1.1876  0.7673
+</pre></div>
+</div></div>
+
+<h3>Step 3:  Form the phenotypic similarity matrix and
+  corresponding eigenvalues based on residualized phenotypes from Step 2</h3>
+
+<div class="chunk" id="unnamed-chunk-9"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com">## centered &amp; scaled matrix of residualized phenotypes:</span>
+<span class="hl std">P0</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">apply</span><span class="hl std">(residuals,</span> <span class="hl num">2</span><span class="hl std">, scale,</span> <span class="hl kwc">scale</span><span class="hl std">=T,</span> <span class="hl kwc">center</span><span class="hl std">=T)</span>
+<span class="hl std">P</span>  <span class="hl kwb">&lt;-</span> <span class="hl kwd">as.matrix</span><span class="hl std">(P0)</span> <span class="hl com"># convert dataframes into matrix</span>
+</pre></div>
+</div></div>
+
+For this example, we construct <code>Yc</code> using the projection matrix:
+The function <code>proj_GAMuT_pheno()</code> constructs the projection matrix
+and corresponding eigenvalues:
+<div class="chunk" id="unnamed-chunk-10"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">proj_pheno</span> <span class="hl kwb">=</span> <span class="hl kwd">proj_GAMuT_pheno</span><span class="hl std">(P)</span>
+<span class="hl std">Yc</span> <span class="hl kwb">=</span> <span class="hl std">proj_pheno</span><span class="hl opt">$</span><span class="hl std">Kc</span>                <span class="hl com"># projection matrix</span>
+<span class="hl std">lambda_Y</span> <span class="hl kwb">=</span> <span class="hl std">proj_pheno</span><span class="hl opt">$</span><span class="hl std">ev_Kc</span>       <span class="hl com"># eigenvalues of Yc</span>
+</pre></div>
+</div></div>
+
+<br><br>
+If one wishes to construct <code>Yc</code> using the linear kernel instead of projection matrix, 
+then use the <code>linear_GAMuT_pheno()</code> function instead.
+Uncommenting the following code would produce the linear kernel and the corresponding eigenvalues:
+<div class="chunk" id="unnamed-chunk-11"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com">## linear_pheno &lt;- linear_GAMuT_pheno(P) </span>
+<span class="hl com">## Yc = linear_pheno$Kc           # linear kernel similarity matrix</span>
+<span class="hl com">## lambda_Y = linear_pheno$ev_Kc  # eigenvalues of Yc</span>
+</pre></div>
+</div></div>
+
+
+<h3>Step 4:  Form the genotypic similarity matrix and
+  corresponding eigenvalues </h3>
+
+We assume weighted linear kernel for genotypes where weights are function of 
+minor-allele frequency (MAF). We apply the beta-distribution MAF weights of 
+<a href="http://www.cell.com/ajhg/fulltext/S0002-9297(11)00222-9" target="blank">
+  Wu et al. (2011) in the SKAT paper</a>:
+<div class="chunk" id="unnamed-chunk-12"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">MAF</span> <span class="hl kwb">=</span> <span class="hl kwd">colMeans</span><span class="hl std">(GENO)</span><span class="hl opt">/</span><span class="hl num">2</span>                      <span class="hl com"># sample MAF of each variant in the sample</span>
+<span class="hl std">beta_weight</span> <span class="hl kwb">=</span> <span class="hl kwd">dbeta</span><span class="hl std">(MAF,</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">25</span><span class="hl std">)</span><span class="hl opt">/</span><span class="hl kwd">dbeta</span><span class="hl std">(</span><span class="hl num">0</span><span class="hl std">,</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">25</span><span class="hl std">)</span> <span class="hl com"># assume beta-distribution weights</span>
+</pre></div>
+</div></div>
+Note: one can use other weight functions by simply recoding <code>beta_weight</code> as desired.
+<br>
+The first eight (out of 368) components for the <code>MAF</code> array are:
+<div class="chunk" id="unnamed-chunk-13"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">MAF[</span><span class="hl num">1</span><span class="hl opt">:</span><span class="hl num">8</span><span class="hl std">]</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##     V1     V2     V3     V4     V5     V6     V7     V8 
+## 0.0010 0.0005 0.0010 0.0005 0.0005 0.0010 0.0010 0.0015
+</pre></div>
+</div></div>
+
+Then the weighted rare variants and the centered genotype matrix are calculated by
+<div class="chunk" id="unnamed-chunk-14"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">G0</span> <span class="hl kwb">=</span> <span class="hl kwd">as.matrix</span><span class="hl std">(GENO)</span><span class="hl opt">%*%</span><span class="hl kwd">diag</span><span class="hl std">(beta_weight)</span> <span class="hl com"># Weighted rare variants</span>
+<span class="hl std">G</span>  <span class="hl kwb">=</span> <span class="hl kwd">as.matrix</span><span class="hl std">(</span><span class="hl kwd">scale</span><span class="hl std">(G0,</span><span class="hl kwc">center</span><span class="hl std">=T,</span><span class="hl kwc">scale</span><span class="hl std">=F))</span>  <span class="hl com"># centered genotype matrix</span>
+</pre></div>
+</div></div>
+
+Next we call the function <code>linear_GAMuT_geno()</code>
+to construct the weighted linear kernel matrix for genotypes along with the eigenvalues:
+<div class="chunk" id="unnamed-chunk-15"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">linear_geno</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">linear_GAMuT_geno</span><span class="hl std">(G)</span>
+<span class="hl std">Xc</span> <span class="hl kwb">&lt;-</span> <span class="hl std">linear_geno</span><span class="hl opt">$</span><span class="hl std">Lc</span>                        <span class="hl com"># linear kernel similarity matrix</span>
+<span class="hl std">lambda_X</span> <span class="hl kwb">&lt;-</span> <span class="hl std">linear_geno</span><span class="hl opt">$</span><span class="hl std">ev_Lc</span>               <span class="hl com"># eigenvalues of Xc</span>
+</pre></div>
+</div></div>
+
+
+<h3>Step 5: Construct the GAMuT and obtain the p-value</h3>
+Finally, the pvalue is calculated using the function <code>TestGAMuT()</code>:
+<div class="chunk" id="unnamed-chunk-16"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">GAMuT_pvalue</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">TestGAMuT</span><span class="hl std">(Yc,lambda_Y,Xc,lambda_X)</span>
+<span class="hl std">GAMuT_pvalue</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] 0.02144
+</pre></div>
+</div></div>
+
+</body>
+</html>
