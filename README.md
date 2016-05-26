@@ -1,3 +1,4 @@
+![R](Rlogo.png)
 ## GAMuT:  Gene Association with Multiple Traits
 ### Introduction
 In [Broadaway et al. (2016)](http://www.cell.com/ajhg/abstract/S0002-9297(16)00052-5),
